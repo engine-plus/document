@@ -23,6 +23,9 @@
 
 启动过程需要注意的是： 启动过程中选择 IAM 角色
 
+> 注意的是 : IAM 需要具有 Marketplace相关权限。
+
+
 当实例启动以后我们可以通过 : `https://{host}` 来访问， 端口 `443`
 
 我们建议您开启 `443` 的外网访问端口， 或者是通过内网代理来访问。
@@ -41,10 +44,10 @@ MysqlHost | 用于存储集群元信息的数据库地址
 MysqlUser | 数据库认证名称， 需具有建库，建表，添加索引等相关权限
 MysqlPassword | 数据库认证密码
 Region | 集群所在区
-AWS ID | 启动机器的aws 凭证ID, 需要具有启动实例， 注销实例， SSM 等的相关权限。
+AWS ID | 启动机器的aws 凭证ID, 需要具有**启动实例**， **注销实例**等权限。
 AWS KEY | aws security key
 SSH Key Name | 集群机器登录公钥， 使用root认证
-AWS IAM Profile | 集群机器IAM
+AWS IAM Profile | 集群机器IAM， IAM 需要具有 **SSM 所有授权**。
 Security Group Id | 机器安全组， 建议开放内网所有端口访问， 多个ID间使用 `,`分割
 
 > 说明: 
