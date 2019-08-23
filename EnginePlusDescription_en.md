@@ -51,7 +51,7 @@ Region | the region of cluster instances
 AWS ID | To start the machine's aws credential ID, you need to have the relevant permissions for the launch instance, logout instance, SSM, and so on.
 AWS KEY | aws security key
 SSH Key Name | cluster instances ssh private key file name,like `*.pem`, please use root authentication
-AWS IAM Profile | cluster instances IAM
+AWS IAM Profile | cluster instances IAM, IAM requires all SSM authorizations.
 Security Group Id | instance security group, it's recommended to open all ports on the intranet，multi-group-Id splitted by `,`
 
 > **Note:**
