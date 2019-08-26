@@ -25,6 +25,9 @@ You can generate those in AWS.
 
 > Steps :  
 > **Start service instance** --> **Register service meta** --> **Create cluster** --> **Run Application**
+
+![UTOOLS1566274360149.png](https://github.com/engine-plus/document/blob/master/jpg/3137472106854333557l.png?raw=true)
+
 ### Step 1: 
 Please start an instance by AMI. (The AMI will be provided by subscription in AWS Marketplace).
 
