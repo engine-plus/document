@@ -15,63 +15,69 @@ With some simple operations, users can start a service to maintain a high perfor
 ## Quick-Start Guide 
 Assumption: You are familiar with AWS.
 Prepare: 
- - an instance for EnginePlus Service
- - `SSH key`
- - `IAM role`
- - Security Group Ids
+ - `SSH key` user is ec2-user
+ - `IAM role`:ec2:RunInstances, ec2:TerminateInstances, ssm:*, aws-marketplace-management:*.
+ - Security Group Ids:one for EnginePlus instance, another for cluster instances.
  - VPC subnetId
+ - MySQL RDS(Optional)
  
 You can generate those in AWS.
 
 > Steps :  
-> **Start service instance** --> **Register service meta** --> **Create cluster** --> **Run Application**
+> **AWS CloudFormation** --> **Start Service** --> **Create cluster** --> **Run Application**
 
 ![UTOOLS1566274360149.png](https://github.com/engine-plus/document/blob/master/jpg/3137472106854333557l.png?raw=true)
 
 ### Step 1: 
-Please start an instance by AMI. (The AMI will be provided by subscription in AWS Marketplace).
-
-![UTOOLS1566274360149.png](https://github.com/engine-plus/document/blob/master/jpg/lALPDgQ9q757G5HNA4HNB2o_1898_899.png?raw=true)
-
-And you must chose IAM role for your instance. When the instance is launched,we can access it via:  `https://{host}` , port is `443`.
-We recommend that you open the external network access port of 443, or access it through proxy.
-
+Subscribe EnginePlus.
 ### Step 2:
-Register Service Meta, when you firstly access the page `https://{host}`, you will jump to the registration page, then you need to fill out the meta form as belows:
+Use AWS CloudFormation to deploy the service automatically (The AMI will be provided by subscription in AWS Marketplace).
+Please fill out the CloudFormation as blows,all of fields is required:
 
-![UTOOLS1566280011727.png](https://github.com/engine-plus/document/blob/master/jpg/953d5264192dd8cd3add7c7b0ee5ac44.png?raw=true)
+![UTOOLS1566280011727.png](https://github.com/engine-plus/document/blob/master/jpg/epregister.png?raw=true)
+
+When the instance is launched,we can access it via:  `https://{host}` , port is `443`.
+We recommend that you open the external network access port of 443, or access it through proxy.
 
 **Form Description**
 
 Field |  Description
 --- | ---
-UserAdmin | user name when login EnginePlus
-Password |  user password when login EnginePlus
-MysqlHost | Database address used to store cluster meta information
-MysqlUser | Database authentication name, need to have the relevant permissions for building a database, table, index, etc.
-MysqlPassword | Database authentication password
-Region | the region of cluster instances
-AWS ID | To start the machine's aws credential ID, you need to have the relevant permissions for the launch instance, logout instance, SSM, and so on.
-AWS KEY | aws security key
-SSH Key Name | cluster instances ssh private key file name,like `*.pem`, please use root authentication
-AWS IAM Profile | cluster instances IAM, IAM requires all SSM authorizations.
-Security Group Id | instance security group, it's recommended to open all ports on the intranet，multi-group-Id splitted by `,`
+InstanceType | EnginePlus Sever instance type.
+KeyName |  SSH key, by which you can access instances of EnginePlus and clusters.
+SubnetId | the subnetId of instances network.
+serverSecurityGroupIds | the list of security group ids in EnginePlus instance.
+serverUserName | the authentication user of EnginePlus.
+serverUserPassword | the authentication password of EnginePlus.
+instanceProfileArn | the name of IAM role for all instances.
+clusterSecurityGroupIds | the list of security group ids in Cluster instances.
+metaHost | address of RDS or local mysql, where stored the cluster meta info. 
+metaUserName | meta database authentication user.
+metaPassword | meta database authentication password.
 
-> **Note:**
+> Notice: 
 
-EnginePlus AMI contains a local mysql service,you can use local database to fill in the form if you don't have own meta Database.
-You can fill in `Ambari MySQL Meta`:
-```
-  MysqlHost: your intranet ip
-  MysqlUser: root
-  MysqlPassword: root
-```
+![](https://github.com/engine-plus/document/blob/master/jpg/epcluster.jpg)
+
+As shown above, the EnginePlus server manages all host resources in cluster units.
+1. For EnginePlus, the examples are mainly divided into two categories, `server instance` and `cluster instance`.
+2. All instances use the same ssh key for authentication.
+3. Server and cluster are recommended to use different security group configurations. Because you need to access github and all machines of cluster, you need to open all outbound rules.
+4. The port of 22, 443 related inbound access should be allowed in server security group.
+5. Because the cluster needs to access all instance communication, for security reasons, all ports must be opened to the internal network.
+6. Cluster and the server instance use the same IAM role. You need to enable `ec2:RunInstances`, `ec2:TerminateInstances`, `ssm:*`,` aws-marketplace-management:*` for this IAM role.
+7. Since the meta-information of cluster needs to be managed, it is recommended that users should provide a third-party mysql database to maintain these meta-information. You only need to provide the database address, username, and password here. The user must have the permissions of creating `database`, `table`, `index`, etc. 
+    We also maintain an open source mysql called MariaDB internally, when you don't need RDS to manage meta-info, you can use metaHost=`localhost` , metaUserName=`root`, metaPassword=`root` directly (required). 
+8. Temporarily only supports us-east-1, when you select subnetId, we should take the security group into consideration.
+
 ### Step 3:
-When the user registers successfully and then logs in, it will be transferred to the main page. The user can select `Install Cluster` to install the cluster.
-
+When EnginePlus is deployed successfully, you can access `https://{host}` to sigin in to the management page. Users can choose `Install Cluster` to install new cluster.
 ![UTOOLS1566280697025.png](https://github.com/engine-plus/document/blob/master/jpg/75a6216a1cae843d9cc0407e788ce90b.png?raw=true)
 
+
 - When click `Install Cluster`, you need to fill out the installation form:
+
+![](https://github.com/engine-plus/document/blob/master/jpg/d87e8473068e10c836cc912e411353a0.png?raw=true)
 
 Field | Description
  --- | ---
