@@ -15,48 +15,48 @@
 > 过程 :  
 > **启动实例** --> **注册元信息** --> **创建集群** --> **运行作业**
 
-#### 第一步， 您需要通过镜像来启动一个实例。
-
-![UTOOLS1566274360147.png](https://github.com/engine-plus/document/blob/master/jpg/4600e56c0e3342cb27d03ffbe9996d0c.png?raw=true)
-
-启动实例使用订阅ami
-
-启动过程需要注意的是： 启动过程中选择 IAM 角色
-
-> 注意的是 : IAM 需要具有 Marketplace相关权限。
-
-
-当实例启动以后我们可以通过 : `https://{host}` 来访问， 端口 `443`
-
-我们建议您开启 `443` 的外网访问端口， 或者是通过内网代理来访问。
+#### 第一步， 订阅我们的服务。
 
 #### 第二步， 注册服务元信息
 
-![UTOOLS1566280011727.png](https://github.com/engine-plus/document/blob/master/jpg/953d5264192dd8cd3add7c7b0ee5ac44.png?raw=true)
+![UTOOLS1566280011727.png](https://github.com/engine-plus/document/blob/master/jpg/epregister.png?raw=true)
 
-用户初次登录时， 会跳转到注册页面， 注册集群元信息
+当您订阅我们的服务以后，您就可以使用它并启动一个 **Engineplus** 服务实例。
+上面的相关字段都是必填项。
+
+> 字段解释 
 
 字段 | 解释
 --- | ---
-UserAdmin | 用户登录管理平台用户名
-Password | 用户登录管理平台用户密码
-MysqlHost | 用于存储集群元信息的数据库地址
-MysqlUser | 数据库认证名称， 需具有建库，建表，添加索引等相关权限
-MysqlPassword | 数据库认证密码
-Region | 集群所在区
-AWS ID | 启动机器的aws 凭证ID, 需要具有**启动实例**， **注销实例**等权限。
-AWS KEY | aws security key
-SSH Key Name | 集群机器登录公钥， 使用root认证
-AWS IAM Profile | 集群机器IAM， IAM 需要具有 **SSM 所有授权**。
-Security Group Id | 机器安全组， 建议开放内网所有端口访问， 多个ID间使用 `,`分割
+InstanceType | 服务实例的主机类型
+KeyName | 用于登录服务以及集群所有机器的 ssh key name, 登录用户名 `ec2-user`
+SubnetId | 服务实例的网络 subnetId
+serverSecurityGroupIds | 服务实例的安全组列表
+serverUserName | 服务管理的认证用户名
+serverUserPassword | 服务管理的认证用户密码
+instanceProfileArn | 服务实例以及集群所有机器实例的 IAM 角色名称
+clusterSecurityGroupIds | 集群机器的安全组列表
+metaHost | 用于存储集群元信息的meta地址
+metaUserName | 用于管理元信息库的用户名称
+metaPassword | 用于管理元信息库的用户密码
 
 > 说明: 
 
-我们再集群主机上维护了一个Mysql, 用户名密码为`root`, 用户没有自己的meta库可以使用这个， host 地址为内网ip.
+如上所示， **EnginePlus** server 以cluster为单位管理所有的主机资源
+
+1. 对于 EnginePlus 来说， 实例主要分为两类， **server实例** ， **cluster实例**。
+2. 所有的实例都统一使用同一个 ssh key 进行认证。
+3. server 跟 cluster 建议使用不同的安全组配置， 因为需要访问 github 以及cluster所有机器， 所以需要开通所有的出站规则。 
+4. server 安全组开通 22, 443 的相关入栈访问规则
+5. cluster 因为集群需要访问所有的实例通信， 出于安全性需要开通所有端口对内网的入栈访问规则
+6. cluster 与 server 实例统一使用相同一个 iam role , 需要对这个iam 开启 `ec2:RunInstances`, `ec2:TerminateInstances`, `ssm:*`, `aws-marketplace-management:*` 等的相关权限。
+7. 由于集群需要管理元信息， 建议用户提供第三方的mysql数据库用来维护这些元信息， 您只需要在这里提供`库地址`,`用户名`，`密码`.  提供用户必须具有**建库**，**建表**，**建索引**等的权限。 我们内部也维护有一个开源mysql, 用户如果想直接使用 metaHost=`localhost(必须)`, metaUserName=`root`, metaPassword=`root`
+8. 暂时只支持 `us-east-1`, 选择subnetId，与安全组需要考虑到
+
 
 ![UTOOLS1566280697025.png](https://github.com/engine-plus/document/blob/master/jpg/75a6216a1cae843d9cc0407e788ce90b.png?raw=true)
 
-当用户注册成功再登录后会调到主页面， 用户可以选择`Install Cluster` 来安装集群。
+当用户启用成功后便可以访问 `https://{host}` 认证登录服务， 用户可以选择`Install Cluster` 来安装集群。
 
 
 #### 第三步， 安装集群
@@ -69,7 +69,7 @@ Security Group Id | 机器安全组， 建议开放内网所有端口访问， �
  --- | ---
  Cluster Name | 集群名称, 数据库中会新建一个以 `{ClusterName}` 命名的库，存放集群信息
  @User/@Password | 集群管理后台`ambari`的登录用户名密码凭证
- SubnetId | 集群安装vpc区
+ SubnetId | 集群实例所在 subnetId
  Company | 云主机厂商， 暂支持aws
  Instance | 实例机型
  
