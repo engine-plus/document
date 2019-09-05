@@ -42,6 +42,8 @@ metaPassword | 用于管理元信息库的用户密码
 
 > 说明: 
 
+![](https://github.com/engine-plus/document/blob/master/jpg/epcluster.jpg)
+
 如上所示， **EnginePlus** server 以cluster为单位管理所有的主机资源
 
 1. 对于 EnginePlus 来说， 实例主要分为两类， **server实例** ， **cluster实例**。
