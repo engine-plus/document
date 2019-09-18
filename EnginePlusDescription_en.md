@@ -49,7 +49,7 @@ SubnetId | the subnetId of instances network.
 serverSecurityGroupIds | the list of security group ids in EnginePlus instance.
 serverUserName | the authentication user of EnginePlus.
 serverUserPassword | the authentication password of EnginePlus.
-instanceProfileArn | the name of IAM role for all instances.
+iamRoleName | the name of IAM role for all instances.
 clusterSecurityGroupIds | the list of security group ids in Cluster instances.
 metaHost | address of RDS or local mysql, where stored the cluster meta info. 
 metaUserName | meta database authentication user.
