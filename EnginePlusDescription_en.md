@@ -1,6 +1,6 @@
 # EnginePlus Intruduction
 
->  **EngiePlus** is a big data cluster management service that helps users to manage and operate clusters such as Hadoop.
+>  **EnginePlus** is a big data cluster management service that helps users to manage and operate clusters such as Hadoop.
 
 ## Features
  * `One-click` create cluster.(Hadoop)
