@@ -16,7 +16,7 @@ With some simple operations, users can start a service to maintain a high perfor
 Assumption: You are familiar with AWS.
 Prepare: 
  - `SSH key` user is ec2-user
- - `IAM role`:ec2:RunInstances, ec2:TerminateInstances, ssm:*, aws-marketplace-management:*.
+ - `IAM role`: `ec2:RunInstances`, `ec2:TerminateInstances`, `ssm:*`, `aws-marketplace-management:*`.
  - Security Group Ids:one for EnginePlus instance, another for cluster instances.
  - VPC subnetId
  - MySQL RDS(Optional)
