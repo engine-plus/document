@@ -16,7 +16,7 @@ With some simple operations, users can start a service to maintain a high perfor
 Assumption: You are familiar with AWS.
 Prepare: 
  - `SSH key` user is ec2-user
- - `IAM role`: `ec2:RunInstances`, `ec2:TerminateInstances`, `ssm:*`, `aws-marketplace-management:*`.
+ - `IAM role`: `ssm:*`, `aws-marketplace:*`.
  - Security Group Ids:one for EnginePlus instance, another for cluster instances.
  - VPC subnetId
  - MySQL RDS(Optional)
@@ -65,7 +65,69 @@ As shown above, the EnginePlus server manages all host resources in cluster unit
 3. Server and cluster are recommended to use different security group configurations. Because you need to access github and all machines of cluster, you need to open all outbound rules.
 4. The port of 22, 443 related inbound access should be allowed in server security group.
 5. Because the cluster needs to access all instance communication, for security reasons, all ports must be opened to the internal network.
-6. Cluster and the server instance use the same IAM role. You need to enable `ec2:RunInstances`, `ec2:TerminateInstances`, `ssm:*`,` aws-marketplace-management:*` for this IAM role.
+6. Cluster and the server instance use the same IAM role. You need to enable  `ssm:*`,` aws-marketplace:*` for this IAM role.
+Actually,we only need permissions of ssm as belows:
+```
+        "ssm:SendCommand",
+        "ssm:ListCommands",
+        "ssm:ListDocumentVersions",
+        "ssm:DescribeInstancePatches",
+        "ssm:ListInstanceAssociations",
+        "ssm:GetParameter",
+        "ssm:GetMaintenanceWindowExecutionTaskInvocation",
+        "ssm:DescribeAutomationExecutions",
+        "ssm:GetMaintenanceWindowTask",
+        "ssm:DescribeMaintenanceWindowExecutionTaskInvocations",
+        "ssm:DescribeAutomationStepExecutions",
+        "ssm:UpdateInstanceInformation",
+        "ssm:DescribeParameters",
+        "ssm:ListResourceDataSync",
+        "ssm:ListDocuments",
+        "ssm:GetMaintenanceWindowExecutionTask",
+        "ssm:GetMaintenanceWindowExecution",
+        "ssm:GetParameters",
+        "ssm:DescribeMaintenanceWindows",
+        "ssm:DescribeEffectivePatchesForPatchBaseline",
+        "ssm:DescribeDocumentPermission",
+        "ssm:ListCommandInvocations",
+        "ssm:GetAutomationExecution",
+        "ssm:DescribePatchGroups",
+        "ssm:GetDefaultPatchBaseline",
+        "ssm:DescribeDocument",
+        "ssm:DescribeMaintenanceWindowTasks",
+        "ssm:ListAssociationVersions",
+        "ssm:GetPatchBaselineForPatchGroup",
+        "ssm:PutConfigurePackageResult",
+        "ssm:DescribePatchGroupState",
+        "ssm:DescribeMaintenanceWindowExecutions",
+        "ssm:GetManifest",
+        "ssm:DescribeMaintenanceWindowExecutionTasks",
+        "ssm:DescribeInstancePatchStates",
+        "ssm:DescribeInstancePatchStatesForPatchGroup",
+        "ssm:GetDocument",
+        "ssm:GetInventorySchema",
+        "ssm:GetParametersByPath",
+        "ssm:GetMaintenanceWindow",
+        "ssm:DescribeInstanceAssociationsStatus",
+        "ssm:GetPatchBaseline",
+        "ssm:DescribeInstanceProperties",
+        "ssm:ListInventoryEntries",
+        "ssm:DescribeAssociation",
+        "ssm:GetDeployablePatchSnapshotForInstance",
+        "ssm:GetParameterHistory",
+        "ssm:DescribeMaintenanceWindowTargets",
+        "ssm:DescribePatchBaselines",
+        "ssm:DescribeEffectiveInstanceAssociations",
+        "ssm:GetInventory",
+        "ssm:DescribeActivations",
+        "ssm:GetCommandInvocation",
+        "ssm:DescribeInstanceInformation",
+        "ssm:ListTagsForResource",
+        "ssm:DescribeDocumentParameters",
+        "ssm:ListAssociations",
+        "ssm:DescribeAvailablePatches"
+```
+
 7. Since the meta-information of cluster needs to be managed, it is recommended that users should provide a third-party mysql database to maintain these meta-information. You only need to provide the database address, username, and password here. The user must have the permissions of creating `database`, `table`, `index`, etc. 
     We also maintain an open source mysql called MariaDB internally, when you don't need RDS to manage meta-info, you can use metaHost=`localhost` , metaUserName=`root`, metaPassword=`root` directly (required). 
 8. Temporarily only supports us-east-1, when you select subnetId, we should take the security group into consideration.
