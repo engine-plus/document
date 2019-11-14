@@ -32,7 +32,7 @@ You can generate those in AWS.
 Subscribe EnginePlus.
 ### Step 2:
 Use AWS CloudFormation to deploy the service automatically (The AMI will be provided by subscription in AWS Marketplace).
-Please fill out the CloudFormation as blows,all of fields is required:
+Please fill out the CloudFormation as belows,all of fields is required:
 
 ![UTOOLS1566280011727.png](https://github.com/engine-plus/document/blob/master/jpg/epregister.png?raw=true)
 
