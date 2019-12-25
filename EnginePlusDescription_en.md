@@ -23,6 +23,7 @@ Prepare:
  
 You can generate those in AWS.
 > **Notice**: 
+
 ![](https://github.com/engine-plus/document/blob/master/jpg/epcluster.jpg)
 As shown above, the EnginePlus server manages all host resources in cluster units.
 1. For EnginePlus, the examples are mainly divided into two categories, `server instance` and `cluster instance`.
@@ -31,7 +32,8 @@ As shown above, the EnginePlus server manages all host resources in cluster unit
 4. The port of 22, 443 related inbound access should be allowed in server security group.
 5. Because the cluster needs to access all instance communication, for security reasons, all ports must be opened to the internal network.
 6. Cluster and the server instance use the same IAM role. You need to enable  `ssm:*`,`aws-marketplace:*` for this IAM role.
-Please add Service Policy `System Manager`(ssm:*) and import managed policy `AWSMarketplaceFullAccess`(aws-marketplace:*):
+
+Please add Service Policy `System Manager`(`ssm:*`) and import managed policy `AWSMarketplaceFullAccess`(`aws-marketplace:*`) like belows:
 ![](https://github.com/engine-plus/document/blob/master/jpg/engineplus_attach_iam_policy.gif)
     - `ssm:*` (used to send commands to the cluster nodes);
     - `aws-marketplace:*`(used to start,stop,terminate cluster instance,if you subscribe EnginePlus-Enterprise,the policy of `aws-marketplace:MeterUsage` will be used to send metering records).
