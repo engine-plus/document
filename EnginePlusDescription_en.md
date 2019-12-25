@@ -15,21 +15,42 @@ With some simple operations, users can start a service to maintain a high perfor
 ## Quick-Start Guide 
 Assumption: You are familiar with AWS.
 Prepare: 
- - `SSH key` user is ec2-user
- - `IAM role`: `ssm:*`, `aws-marketplace:*`.
+ - `SSH key` user is ec2-user.
+ - `IAM role`: `ssm:*`,`aws-marketplace:*`.
  - Security Group Ids:one for EnginePlus instance, another for cluster instances.
- - VPC subnetId
- - MySQL RDS(Optional)
+ - VPC subnetId.
+ - MySQL RDS(Optional).
  
 You can generate those in AWS.
+> **Notice**: 
+![](https://github.com/engine-plus/document/blob/master/jpg/epcluster.jpg)
+As shown above, the EnginePlus server manages all host resources in cluster units.
+1. For EnginePlus, the examples are mainly divided into two categories, `server instance` and `cluster instance`.
+2. All instances use the same ssh key for authentication.
+3. Server and cluster are recommended to use different security group configurations. Because you need to access github and all machines of cluster, you need to open all outbound rules.
+4. The port of 22, 443 related inbound access should be allowed in server security group.
+5. Because the cluster needs to access all instance communication, for security reasons, all ports must be opened to the internal network.
+6. Cluster and the server instance use the same IAM role. You need to enable  `ssm:*`,`aws-marketplace:*` for this IAM role.
+Please add Service Policy `System Manager`(ssm:*) and import managed policy `AWSMarketplaceFullAccess`(aws-marketplace:*):
+![](https://github.com/engine-plus/document/blob/master/jpg/engineplus_attach_iam_policy.gif)
+    - `ssm:*` (used to send commands to the cluster nodes);
+    - `aws-marketplace:*`(used to start,stop,terminate cluster instance,if you subscribe EnginePlus-Enterprise,the policy of `aws-marketplace:MeterUsage` will be used to send metering records).
+If the policies are not correct,the Engineplus will stop,and will restart automatically after 30s util you set correct IAM polices.
+Also,if the metering service of Engineplus-Enterprise has exceptions,the server will switch the restart process utill the metering service turns normal,but the cluster you have created will be alive.
 
-> Steps :  
+7. Since the meta-information of cluster needs to be managed, it is recommended that users should provide a third-party mysql database to maintain these meta-information. You only need to provide the database address, username, and password here. The user must have the permissions of creating `database`, `table`, `index`, etc. 
+    We also maintain an open source mysql called MariaDB internally, when you don't need RDS to manage meta-info, you can use metaHost=`localhost` , metaUserName=`root`, metaPassword=`root` directly (required). 
+8. Temporarily only supports us-east-1, when you select subnetId, we should take the security group into consideration.
+ 
+
+## Steps :  
 > **AWS CloudFormation** --> **Start Service** --> **Create cluster** --> **Run Application**
 
 ![UTOOLS1566274360149.png](https://github.com/engine-plus/document/blob/master/jpg/3137472106854333557l.png?raw=true)
 
 ### Step 1: 
 Subscribe EnginePlus.
+
 ### Step 2:
 Use AWS CloudFormation to deploy the service automatically (The AMI will be provided by subscription in AWS Marketplace).
 Please fill out the CloudFormation as belows,all of fields is required:
@@ -55,82 +76,6 @@ metaHost | address of RDS or local mysql, where stored the cluster meta info.
 metaUserName | meta database authentication user.
 metaPassword | meta database authentication password.
 
-> Notice: 
-
-![](https://github.com/engine-plus/document/blob/master/jpg/epcluster.jpg)
-
-As shown above, the EnginePlus server manages all host resources in cluster units.
-1. For EnginePlus, the examples are mainly divided into two categories, `server instance` and `cluster instance`.
-2. All instances use the same ssh key for authentication.
-3. Server and cluster are recommended to use different security group configurations. Because you need to access github and all machines of cluster, you need to open all outbound rules.
-4. The port of 22, 443 related inbound access should be allowed in server security group.
-5. Because the cluster needs to access all instance communication, for security reasons, all ports must be opened to the internal network.
-6. Cluster and the server instance use the same IAM role. You need to enable  `ssm:*`,` aws-marketplace:*` for this IAM role.
-Actually,we only need permissions of ssm as belows:
-```
-        "ssm:SendCommand",
-        "ssm:ListCommands",
-        "ssm:ListDocumentVersions",
-        "ssm:DescribeInstancePatches",
-        "ssm:ListInstanceAssociations",
-        "ssm:GetParameter",
-        "ssm:GetMaintenanceWindowExecutionTaskInvocation",
-        "ssm:DescribeAutomationExecutions",
-        "ssm:GetMaintenanceWindowTask",
-        "ssm:DescribeMaintenanceWindowExecutionTaskInvocations",
-        "ssm:DescribeAutomationStepExecutions",
-        "ssm:UpdateInstanceInformation",
-        "ssm:DescribeParameters",
-        "ssm:ListResourceDataSync",
-        "ssm:ListDocuments",
-        "ssm:GetMaintenanceWindowExecutionTask",
-        "ssm:GetMaintenanceWindowExecution",
-        "ssm:GetParameters",
-        "ssm:DescribeMaintenanceWindows",
-        "ssm:DescribeEffectivePatchesForPatchBaseline",
-        "ssm:DescribeDocumentPermission",
-        "ssm:ListCommandInvocations",
-        "ssm:GetAutomationExecution",
-        "ssm:DescribePatchGroups",
-        "ssm:GetDefaultPatchBaseline",
-        "ssm:DescribeDocument",
-        "ssm:DescribeMaintenanceWindowTasks",
-        "ssm:ListAssociationVersions",
-        "ssm:GetPatchBaselineForPatchGroup",
-        "ssm:PutConfigurePackageResult",
-        "ssm:DescribePatchGroupState",
-        "ssm:DescribeMaintenanceWindowExecutions",
-        "ssm:GetManifest",
-        "ssm:DescribeMaintenanceWindowExecutionTasks",
-        "ssm:DescribeInstancePatchStates",
-        "ssm:DescribeInstancePatchStatesForPatchGroup",
-        "ssm:GetDocument",
-        "ssm:GetInventorySchema",
-        "ssm:GetParametersByPath",
-        "ssm:GetMaintenanceWindow",
-        "ssm:DescribeInstanceAssociationsStatus",
-        "ssm:GetPatchBaseline",
-        "ssm:DescribeInstanceProperties",
-        "ssm:ListInventoryEntries",
-        "ssm:DescribeAssociation",
-        "ssm:GetDeployablePatchSnapshotForInstance",
-        "ssm:GetParameterHistory",
-        "ssm:DescribeMaintenanceWindowTargets",
-        "ssm:DescribePatchBaselines",
-        "ssm:DescribeEffectiveInstanceAssociations",
-        "ssm:GetInventory",
-        "ssm:DescribeActivations",
-        "ssm:GetCommandInvocation",
-        "ssm:DescribeInstanceInformation",
-        "ssm:ListTagsForResource",
-        "ssm:DescribeDocumentParameters",
-        "ssm:ListAssociations",
-        "ssm:DescribeAvailablePatches"
-```
-
-7. Since the meta-information of cluster needs to be managed, it is recommended that users should provide a third-party mysql database to maintain these meta-information. You only need to provide the database address, username, and password here. The user must have the permissions of creating `database`, `table`, `index`, etc. 
-    We also maintain an open source mysql called MariaDB internally, when you don't need RDS to manage meta-info, you can use metaHost=`localhost` , metaUserName=`root`, metaPassword=`root` directly (required). 
-8. Temporarily only supports us-east-1, when you select subnetId, we should take the security group into consideration.
 
 ### Step 3:
 When EnginePlus is deployed successfully, you can access `https://{host}` to sigin in to the management page. Users can choose `Install Cluster` to install new cluster.
