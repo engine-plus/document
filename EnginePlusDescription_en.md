@@ -35,8 +35,9 @@ As shown above, the EnginePlus server manages all host resources in cluster unit
 
 Please add Service Policy `System Manager`(`ssm:*`) and import managed policy `AWSMarketplaceFullAccess`(`aws-marketplace:*`) like belows:
 ![](https://github.com/engine-plus/document/blob/master/jpg/engineplus_attach_iam_policy.gif)
-    - `ssm:*` (used to send commands to the cluster nodes);
-    - `aws-marketplace:*`(used to start,stop,terminate cluster instance,if you subscribe EnginePlus-Enterprise,the policy of `aws-marketplace:MeterUsage` will be used to send metering records).
+
+ - `ssm:*` (used to send commands to the cluster nodes);
+ - `aws-marketplace:*`(used to start,stop,terminate cluster instance,if you subscribe EnginePlus-Enterprise,the policy of `aws-marketplace:MeterUsage` will be used to send metering records).
 If the policies are not correct,the Engineplus will stop,and will restart automatically after 30s util you set correct IAM polices.
 Also,if the metering service of Engineplus-Enterprise has exceptions,the server will switch the restart process utill the metering service turns normal,but the cluster you have created will be alive.
 
