@@ -19,7 +19,7 @@ Prepare:
  - `IAM role`: `ssm:*`,`aws-marketplace:*`.
  - Security Group Ids:one for EnginePlus instance, another for cluster instances.
  - VPC subnetId.
- - MySQL RDS(Optional).
+ - MySQL RDS.
  
 You can generate those in AWS.
 > **Notice**: 
@@ -44,7 +44,7 @@ Please add Service Policy `System Manager`(`ssm:*`) and import managed policy `A
 **Also,if the metering service of Engineplus-Enterprise has exceptions,the server will switch the restart process utill the metering service turns normal,but the cluster you have created will be alive.**
 
 7. Since the meta-information of cluster needs to be managed, it is recommended that users should provide a third-party mysql database to maintain these meta-information. You only need to provide the database address, username, and password here. The user must have the permissions of creating `database`, `table`, `index`, etc. 
-    We also maintain an open source mysql called MariaDB internally, when you don't need RDS to manage meta-info, you can use metaHost=`localhost` , metaUserName=`root`, metaPassword=`root` directly (required). 
+   
 8. Temporarily only supports us-east-1, when you select subnetId, we should take the security group into consideration.
  
 
