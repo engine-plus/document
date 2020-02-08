@@ -1,4 +1,4 @@
-# EnginePlus Intruduction
+# EnginePlus Introduction
 
 >  **EnginePlus** is a big data cluster management service that helps users to manage and operate clusters such as Hadoop.
 
@@ -16,10 +16,12 @@ With some simple operations, users can start a service to maintain a high perfor
 Assumption: You are familiar with AWS.
 Prepare: 
  - `SSH key` user is ec2-user.
- - `IAM role`: `ssm:*`,`aws-marketplace:*`.
- - Security Group Ids:one for EnginePlus instance, another for cluster instances.
- - VPC subnetId.
- - MySQL RDS.
+ - `IAM role`: `ssm:*`,`aws-marketplace:*`,`rds:CreateDBInstance`.
+ - Security Group Ids:one for EnginePlus server instance, another for cluster instances.
+ - MySQL RDS.(Currently,we will create MySQL RDS automatically in EnginePlus-Enterprise by Cloudformation,the RDS could be connect by your vpc network).
+ - VPC subnetIds(at least 2 availability zones for DBSubnetGroup when create MySQL RDS,but EnginePlus server only need one subnetId).
+ 
+  By the words,we hope you sign in AWS Marketplace using IAM role that includes `ssm:*`,`aws-marketplace:*`,`rds:CreateDBInstance`, if your AWS account for marketplace is not the IAM role you will use in EnginePlus,please allow the permission`rds:CreateDBInstance` for your AWS account.
  
 You can generate those in AWS.
 > **Notice**: 
@@ -30,7 +32,7 @@ As shown above, the EnginePlus server manages all host resources in cluster unit
 2. All instances use the same ssh key for authentication.
 3. Server and cluster are recommended to use different security group configurations. Because you need to access github and all machines of cluster, you need to open all outbound rules.
 4. The port of 22, 443 related inbound access should be allowed in server security group.
-5. Because the cluster needs to access all instance communication, for security reasons, all ports must be opened to the internal network.
+5. Because the cluster needs to access all instance communication, for security reasons, all ports must be opened to the intranet.
 6. Cluster and the server instance use the same IAM role. You need to enable  `ssm:*`,`aws-marketplace:*` for this IAM role.
 
 Please add Service Policy `System Manager`(`ssm:*`) and import managed policy `AWSMarketplaceFullAccess`(`aws-marketplace:*`) like belows:
@@ -43,7 +45,7 @@ Please add Service Policy `System Manager`(`ssm:*`) and import managed policy `A
 
 **Also,if the metering service of Engineplus-Enterprise has exceptions,the server will switch the restart process utill the metering service turns normal,but the cluster you have created will be alive.**
 
-7. Since the meta-information of cluster needs to be managed, it is recommended that users should provide a third-party mysql database(you can use AWS RDS) to maintain these meta-information. You only need to provide the database address, username, and password here. The user must have the permissions of creating `database`, `table`, `index`, etc. But please don't use root credentials.
+7. Since the meta-information of cluster needs to be managed, it is recommended that users should provide a third-party mysql database(you can use AWS RDS,the EnginePlus-Enterprise will create the AWS RDS `db.t3.medium` automatically) to maintain these meta-information. You only need to provide the database address, username, and password here. The user must have the permissions of creating `database`, `table`, `index`, etc. But please don't use root credentials.
    
 8. Temporarily only supports us-east-1, when you select subnetId, we should take the security group into consideration.
  
@@ -71,13 +73,13 @@ Field |  Description
 --- | ---
 InstanceType | EnginePlus Sever instance type.
 KeyName |  SSH key, by which you can access instances of EnginePlus and clusters.
-SubnetId | the subnetId of instances network.
+SubnetIds | the subnetIds of instances vpc network,please provide subnetIds covered at least 2 AZs.
 serverSecurityGroupIds | the list of security group ids in EnginePlus instance.
 serverUserName | the authentication user of EnginePlus.
 serverUserPassword | the authentication password of EnginePlus.
 iamRoleName | the name of IAM role for all instances.
 clusterSecurityGroupIds | the list of security group ids in Cluster instances.
-metaHost | address of RDS or local mysql, where stored the cluster meta info. 
+metaHost | address of RDS,where stored the cluster meta info, but the field will not appear in the EnginePlus-Enterprise.
 metaUserName | meta database authentication user.
 metaPassword | meta database authentication password.
 
